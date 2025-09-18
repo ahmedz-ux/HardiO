@@ -275,13 +275,15 @@ ggplot(results, aes(x = age, y = balance)) +
 
 # Show final result
 final_balance <- results$balance[nrow(results)]
+total_return <- round((final_balance / initial_balance - 1) * 100, 1)
+
 cat("Final Balance at Age 55: $", round(final_balance, 2), "\n")
-cat("Total Return: ", round((final_balance / initial_balance - 1) * 100, 1), "%\n")
+cat("Total Return: ", total_return, "%\n")
 ```
 
-**Answer:** In this single simulation, the final balance was **[$8042.62]** with a **[704.3 %]**% return. 
+**Answer:** In this single simulation, the final balance was **$`r round(final_balance, 2)`** with a **`r total_return`%** return. 
 
-**Am I happy?** [I am extremely happy with the result, since it went up by 704.3% over 30 years.]
+**Am I happy?** Based on this result, I am **[happy/surprised]** because the simulation shows **[a significant gain/loss]** over 30 years.
 
 ## Question 4: 100 Simulations - Distribution of Results
 
@@ -352,15 +354,15 @@ cat("Probability above $1,000: ", round(prob_above_1000 * 100, 1), "%\n")
 ```
 
 **Answer:** From 100 simulations:
-- **Mean final balance:** $**[WILL SHOW IN OUTPUT]**
-- **Median final balance:** $**[WILL SHOW IN OUTPUT]**  
-- **Probability above $1,000:** **[WILL SHOW IN OUTPUT]**%
+- **Mean final balance:** $`r round(mean_balance, 2)`
+- **Median final balance:** $`r round(median_balance, 2)`  
+- **Probability above $1,000:** `r round(prob_above_1000 * 100, 1)`%
 
-**Am I happy?** [Your interpretation - most people lose money despite positive expected value!]
+**Am I happy?** Based on these results, I am **[surprised/concerned]** because most simulations show **[gains/losses]** despite the positive expected value per flip.
 
 ## Question 5: Probability of Ending Up Above $1,000
 
-**Answer:** The probability that your account balance will be greater than $1,000 at age 55 is approximately **[WILL SHOW IN OUTPUT]**%.
+**Answer:** The probability that your account balance will be greater than $1,000 at age 55 is approximately **`r round(prob_above_1000 * 100, 1)`%**.
 
 This is calculated from our 100 simulations above - we simply count how many simulations ended up above $1,000 and divide by 100.
 
@@ -447,10 +449,10 @@ cat("Modified Game - Mean final balance: $", round(mean(modified_final_balances)
 ```
 
 **Answer:** 
-- **Original Game:** Probability above $10,000 = **[WILL SHOW IN OUTPUT]**%
-- **Modified Game:** Probability above $10,000 = **[WILL SHOW IN OUTPUT]**%
+- **Original Game:** Probability above $10,000 = **`r round(prob_original_above_10000 * 100, 1)`%**
+- **Modified Game:** Probability above $10,000 = **`r round(prob_modified_above_10000 * 100, 1)`%**
 
-**Comparison:** The probability in the modified game is **[HIGHER/LOWER]** than the original game.
+**Comparison:** The probability in the modified game is **`r ifelse(prob_modified_above_10000 > prob_original_above_10000, "HIGHER", "LOWER")`** than the original game.
 
 **Why?** The modified game is more conservative - smaller gains (+25% vs +50%) but also smaller losses (-20% vs -40%), which changes the risk profile.
 
