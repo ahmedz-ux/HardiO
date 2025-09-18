@@ -283,7 +283,7 @@ cat("Total Return: ", total_return, "%\n")
 
 **Answer:** In this single simulation, the final balance was **$`r round(final_balance, 2)`** with a **`r total_return`%** return. 
 
-**Am I happy?** Based on this result, I am **[happy/surprised]** because the simulation shows **[a significant gain/loss]** over 30 years.
+**Am I happy?** Based on this result, I am **Happy** because the simulation shows **a significant gain** over 30 years.
 
 ## Question 4: 100 Simulations - Distribution of Results
 
