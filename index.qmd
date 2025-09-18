@@ -670,244 +670,97 @@ print(f"Probability above initial: {prob_above_initial:.3f}")
 
 # My Analysis: Investment Game Simulation 🎯
 
-Now let's work through the challenge questions step by step, implementing the actual simulations and analysis.
+## Question 1: Expected Value After 1 Coin Flip
 
-## Question 1: Expected Value Analysis
+**Answer:** The expected value is **$1,050**
 
-We will calculate the expected value of your account balance after 1 coin flip for the original game.
-
-**Original Game Rules:**
-- Heads (50% chance): Account balance increases by 50% → New balance = $1,000 × 1.5 = $1,500
-- Tails (50% chance): Account balance decreases by 40% → New balance = $1,000 × 0.6 = $600
-
-**Expected Value Calculation:**
-$E[Balance] = 0.5 × \$1,500 + 0.5 × \$600 = \$750 + \$300 = \$1,050$
-
-::: {.callout-note}
-## Expected Value Result
-The expected value after one coin flip is **$1,050**, which is $50 higher than the initial $1,000 investment.
-:::
+**Calculation:**
+- Heads (50% chance): $1,000 × 1.5 = $1,500
+- Tails (50% chance): $1,000 × 0.6 = $600
+- Expected Value = 0.5 × $1,500 + 0.5 × $600 = **$1,050**
 
 ## Question 2: Expectation vs. Reality
 
-**Analysis:**
-- The expected value is **positive** ($1,050 vs. $1,000 initial)
-- Based on this calculation, we would expect the account to be worth **more** than $1,000
-- However, this is just the mathematical expectation - in reality, you'll either have $1,500 (if heads) or $600 (if tails)
-- The positive expected value doesn't guarantee a positive outcome in any single trial
+**Answer:** The expected value is **positive** ($1,050 vs. $1,000), so we expect the account to be worth **more** than $1,000.
 
-::: {.callout-warning}
-## Important Insight
-While the expected value is positive, this doesn't mean we should be confident about the outcome. The expected value is just the average of all possible outcomes weighted by their probabilities.
-:::
+**However:** This is just math! In reality, you'll either get $1,500 or $600 - the expected value doesn't guarantee anything.
 
-## Question 3: Single Simulation - Account Balance Over Time
-
-Let's run one simulation showing how the account balance evolves over time (from age 25 to 55, assuming 30 years of coin flips).
-
-### Original Game Simulation
-
-::: {.panel-tabset}
-
-### R Implementation
+## Question 3: Single Simulation Over Time
 
 ```{r}
-#| label: original-single-sim
-#| fig-cap: Single simulation of original investment game over 30 years
+#| label: single-simulation
+#| fig-cap: One simulation showing account balance from age 25 to 55
 #| echo: true
 
-suppressPackageStartupMessages(library(tidyverse))
-suppressPackageStartupMessages(library(ggplot2))
-
-# Set seed for reproducibility
 set.seed(42)
-
-# Parameters
 initial_balance <- 1000
-n_years <- 30  # From age 25 to 55
-current_age <- 25
+n_years <- 30
 
-# Simulate the original game
-simulate_original_game <- function(initial, years) {
-  balance <- initial
-  age <- current_age
-  results <- data.frame(age = age, balance = balance)
+# Simulate 30 years
+balance <- initial_balance
+age <- 25
+results <- data.frame(age = age, balance = balance)
+
+for (i in 1:n_years) {
+  coin_flip <- rbinom(1, 1, 0.5)  # 1 = heads, 0 = tails
   
-  for (i in 1:years) {
-    coin_flip <- rbinom(1, 1, 0.5)  # 1 = heads, 0 = tails
-    
-    if (coin_flip == 1) {
-      # Heads: increase by 50%
-      balance <- balance * 1.5
-    } else {
-      # Tails: decrease by 40%
-      balance <- balance * 0.6
-    }
-    
-    age <- age + 1
-    results <- rbind(results, data.frame(age = age, balance = balance))
+  if (coin_flip == 1) {
+    balance <- balance * 1.5  # +50%
+  } else {
+    balance <- balance * 0.6  # -40%
   }
   
-  return(results)
+  age <- age + 1
+  results <- rbind(results, data.frame(age = age, balance = balance))
 }
 
-# Run single simulation
-single_sim <- simulate_original_game(initial_balance, n_years)
-
-# Create the plot
-ggplot(single_sim, aes(x = age, y = balance)) +
+# Plot the results
+library(ggplot2)
+ggplot(results, aes(x = age, y = balance)) +
   geom_line(color = "darkblue", linewidth = 1.2) +
   geom_point(color = "red", size = 2) +
-  geom_hline(yintercept = initial_balance, color = "green", linetype = "dashed", linewidth = 1) +
+  geom_hline(yintercept = initial_balance, color = "green", linetype = "dashed") +
   labs(
-    title = "Single Simulation: Original Investment Game",
-    subtitle = "Account Balance Evolution from Age 25 to 55",
-    x = "Age",
-    y = "Account Balance ($)",
-    caption = "Green line shows initial balance ($1,000)\nHeads: +50%, Tails: -40%"
+    title = "Single Simulation: Account Balance Over Time",
+    x = "Age", y = "Account Balance ($)",
+    caption = "Green line = Initial $1,000"
   ) +
   scale_y_continuous(labels = scales::dollar_format()) +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(size = 14, face = "bold"),
-    plot.subtitle = element_text(size = 12, color = "gray50"),
-    axis.text = element_text(size = 10)
-  )
+  theme_minimal()
 
-# Show final results
-cat("Final Results:\n")
-cat("Initial Balance: $", initial_balance, "\n")
-cat("Final Balance: $", round(single_sim$balance[nrow(single_sim)], 2), "\n")
-cat("Total Return: ", round((single_sim$balance[nrow(single_sim)] / initial_balance - 1) * 100, 1), "%\n")
-cat("Years with gains: ", sum(diff(single_sim$balance) > 0), " out of ", n_years, "\n")
+# Show final result
+final_balance <- results$balance[nrow(results)]
+cat("Final Balance at Age 55: $", round(final_balance, 2), "\n")
+cat("Total Return: ", round((final_balance / initial_balance - 1) * 100, 1), "%\n")
 ```
 
-### Python Implementation
+**Answer:** In this single simulation, the final balance was **[WILL SHOW IN OUTPUT]** with a **[WILL SHOW IN OUTPUT]**% return. 
 
-```{python}
-#| label: original-single-sim-python
-#| fig-cap: Single simulation of original investment game over 30 years (Python)
-#| echo: true
-#| eval: false
+**Am I happy?** [Your interpretation based on the actual result]
 
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-
-# Set seed for reproducibility
-np.random.seed(42)
-
-# Parameters
-initial_balance = 1000
-n_years = 30  # From age 25 to 55
-current_age = 25
-
-# Simulate the original game
-def simulate_original_game(initial, years):
-    balance = initial
-    age = current_age
-    results = {'age': [age], 'balance': [balance]}
-    
-    for i in range(years):
-        coin_flip = np.random.binomial(1, 0.5)  # 1 = heads, 0 = tails
-        
-        if coin_flip == 1:
-            # Heads: increase by 50%
-            balance = balance * 1.5
-        else:
-            # Tails: decrease by 40%
-            balance = balance * 0.6
-        
-        age += 1
-        results['age'].append(age)
-        results['balance'].append(balance)
-    
-    return pd.DataFrame(results)
-
-# Run single simulation
-single_sim = simulate_original_game(initial_balance, n_years)
-
-# Create the plot
-fig, ax = plt.subplots(figsize=(12, 8))
-ax.plot(single_sim['age'], single_sim['balance'], 
-        color='darkblue', linewidth=2, marker='o', markersize=4)
-ax.axhline(initial_balance, color='green', linestyle='--', linewidth=2, 
-           label='Initial Balance')
-ax.set_title('Single Simulation: Original Investment Game\nAccount Balance Evolution from Age 25 to 55', 
-             fontsize=14, fontweight='bold')
-ax.set_xlabel('Age', fontsize=12)
-ax.set_ylabel('Account Balance ($)', fontsize=12)
-ax.legend()
-ax.grid(True, alpha=0.3)
-ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'${x:,.0f}'))
-
-plt.tight_layout()
-plt.show()
-
-# Show final results
-final_balance = single_sim['balance'].iloc[-1]
-total_return = (final_balance / initial_balance - 1) * 100
-gains_years = sum(np.diff(single_sim['balance']) > 0)
-
-print("Final Results:")
-print(f"Initial Balance: ${initial_balance:,}")
-print(f"Final Balance: ${final_balance:,.2f}")
-print(f"Total Return: {total_return:.1f}%")
-print(f"Years with gains: {gains_years} out of {n_years}")
-```
-
-:::
-
-**Analysis of Single Simulation Results:**
-
-Looking at this single simulation, we can see:
-- The account balance fluctuates dramatically over time
-- There are periods of significant growth followed by steep declines
-- The volatility increases over time due to the multiplicative nature of the game
-- Even with a positive expected value per flip, the actual path can be quite different from expectations
-
-::: {.callout-tip}
-## Key Insight
-This single simulation demonstrates the difference between expected value and actual outcomes. While the expected value is positive, any individual path can result in significant losses or gains.
-:::
-
-## Question 4: Multiple Simulations - Probability Distribution
-
-Now let's run 100 simulations to see the distribution of final account balances at age 55. This will give us a better understanding of the range of possible outcomes.
-
-::: {.panel-tabset}
-
-### R Implementation
+## Question 4: 100 Simulations - Distribution of Results
 
 ```{r}
-#| label: original-multiple-sims
-#| fig-cap: Distribution of final balances from 100 simulations of original game
+#| label: multiple-simulations
+#| fig-cap: Distribution of final balances from 100 simulations
 #| echo: true
 
-suppressPackageStartupMessages(library(tidyverse))
-suppressPackageStartupMessages(library(ggplot2))
-
-# Set seed for reproducibility
 set.seed(123)
-
-# Parameters
 initial_balance <- 1000
-n_years <- 30  # From age 25 to 55
+n_years <- 30
 n_sims <- 100
 
-# Function to simulate final balance only
-simulate_final_balance_original <- function(initial, years) {
+# Function to run one complete simulation
+simulate_final_balance <- function(initial, years) {
   balance <- initial
   
   for (i in 1:years) {
     coin_flip <- rbinom(1, 1, 0.5)  # 1 = heads, 0 = tails
     
     if (coin_flip == 1) {
-      # Heads: increase by 50%
-      balance <- balance * 1.5
+      balance <- balance * 1.5  # +50%
     } else {
-      # Tails: decrease by 40%
-      balance <- balance * 0.6
+      balance <- balance * 0.6  # -40%
     }
   }
   
@@ -915,259 +768,65 @@ simulate_final_balance_original <- function(initial, years) {
 }
 
 # Run 100 simulations
-final_balances <- replicate(n_sims, simulate_final_balance_original(initial_balance, n_years))
-
-# Create data frame
-sim_results <- data.frame(
-  sim_num = 1:n_sims,
-  final_balance = final_balances
-)
+final_balances <- replicate(n_sims, simulate_final_balance(initial_balance, n_years))
 
 # Create histogram
+sim_results <- data.frame(final_balance = final_balances)
 ggplot(sim_results, aes(x = final_balance)) +
-  geom_histogram(bins = 30, fill = "steelblue", alpha = 0.7, color = "black") +
+  geom_histogram(bins = 20, fill = "steelblue", alpha = 0.7, color = "black") +
   geom_vline(xintercept = initial_balance, color = "red", linetype = "dashed", linewidth = 1.5) +
-  geom_vline(xintercept = mean(final_balances), color = "green", linetype = "solid", linewidth = 1.5) +
   labs(
-    title = "Distribution of Final Account Balances",
-    subtitle = "100 Simulations of Original Investment Game (Age 25 to 55)",
-    x = "Final Balance at Age 55 ($)",
-    y = "Frequency",
-    caption = "Red line: Initial balance ($1,000)\nGreen line: Mean final balance"
+    title = "Distribution of Final Balances (100 Simulations)",
+    x = "Final Balance at Age 55 ($)", y = "Frequency",
+    caption = "Red line = Initial $1,000"
   ) +
-  scale_x_continuous(
-    labels = scales::dollar_format(),
-    trans = "log10",
-    breaks = c(1, 10, 100, 1000, 10000, 100000)
-  ) +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(size = 14, face = "bold"),
-    plot.subtitle = element_text(size = 12, color = "gray50"),
-    axis.text = element_text(size = 10)
-  )
+  scale_x_continuous(labels = scales::dollar_format(), trans = "log10") +
+  theme_minimal()
 
 # Summary statistics
-summary_stats <- sim_results %>%
-  summarise(
-    mean_balance = mean(final_balance),
-    median_balance = median(final_balance),
-    min_balance = min(final_balance),
-    max_balance = max(final_balance),
-    prob_above_initial = mean(final_balance > initial_balance),
-    prob_above_10000 = mean(final_balance > 10000)
-  )
+prob_above_1000 <- mean(final_balances > 1000)
+mean_balance <- mean(final_balances)
+median_balance <- median(final_balances)
 
-print("Summary Statistics:")
-print(summary_stats)
+cat("Results from 100 simulations:\n")
+cat("Mean final balance: $", round(mean_balance, 2), "\n")
+cat("Median final balance: $", round(median_balance, 2), "\n")
+cat("Probability above $1,000: ", round(prob_above_1000 * 100, 1), "%\n")
 ```
 
-### Python Implementation
+**Answer:** From 100 simulations:
+- **Mean final balance:** $**[WILL SHOW IN OUTPUT]**
+- **Median final balance:** $**[WILL SHOW IN OUTPUT]**  
+- **Probability above $1,000:** **[WILL SHOW IN OUTPUT]**%
 
-```{python}
-#| label: original-multiple-sims-python
-#| fig-cap: Distribution of final balances from 100 simulations of original game (Python)
-#| echo: true
-#| eval: false
+**Am I happy?** [Your interpretation - most people lose money despite positive expected value!]
 
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
+## Question 5: Probability of Ending Up Above $1,000
 
-# Set seed for reproducibility
-np.random.seed(123)
+**Answer:** The probability that your account balance will be greater than $1,000 at age 55 is approximately **[WILL SHOW IN OUTPUT]**%.
 
-# Parameters
-initial_balance = 1000
-n_years = 30  # From age 25 to 55
-n_sims = 100
+This is calculated from our 100 simulations above - we simply count how many simulations ended up above $1,000 and divide by 100.
 
-# Function to simulate final balance only
-def simulate_final_balance_original(initial, years):
-    balance = initial
-    
-    for i in range(years):
-        coin_flip = np.random.binomial(1, 0.5)  # 1 = heads, 0 = tails
-        
-        if coin_flip == 1:
-            # Heads: increase by 50%
-            balance = balance * 1.5
-        else:
-            # Tails: decrease by 40%
-            balance = balance * 0.6
-    
-    return balance
+**Key Insight:** Even though each coin flip has a positive expected value, most people actually lose money over 30 years! This is the counterintuitive result of the investment game.
 
-# Run 100 simulations
-final_balances = [simulate_final_balance_original(initial_balance, n_years) for _ in range(n_sims)]
+## Question 6: Modified Game Strategy Comparison
 
-# Create data frame
-sim_results = pd.DataFrame({
-    'sim_num': range(1, n_sims + 1),
-    'final_balance': final_balances
-})
-
-# Create histogram
-fig, ax = plt.subplots(figsize=(12, 8))
-ax.hist(sim_results['final_balance'], bins=30, color='steelblue', alpha=0.7, edgecolor='black')
-ax.axvline(initial_balance, color='red', linestyle='--', linewidth=2, label='Initial Balance')
-ax.axvline(np.mean(final_balances), color='green', linestyle='-', linewidth=2, label='Mean Final Balance')
-ax.set_title('Distribution of Final Account Balances\n100 Simulations of Original Investment Game (Age 25 to 55)', 
-             fontsize=14, fontweight='bold')
-ax.set_xlabel('Final Balance at Age 55 ($)', fontsize=12)
-ax.set_ylabel('Frequency', fontsize=12)
-ax.set_xscale('log')
-ax.legend()
-ax.grid(True, alpha=0.3)
-
-# Format x-axis as currency
-ax.xaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'${x:,.0f}'))
-
-plt.tight_layout()
-plt.show()
-
-# Summary statistics
-mean_balance = np.mean(final_balances)
-median_balance = np.median(final_balances)
-min_balance = np.min(final_balances)
-max_balance = np.max(final_balances)
-prob_above_initial = np.mean(np.array(final_balances) > initial_balance)
-prob_above_10000 = np.mean(np.array(final_balances) > 10000)
-
-print("Summary Statistics:")
-print(f"Mean balance: ${mean_balance:,.2f}")
-print(f"Median balance: ${median_balance:,.2f}")
-print(f"Min balance: ${min_balance:,.2f}")
-print(f"Max balance: ${max_balance:,.2f}")
-print(f"Probability above initial: {prob_above_initial:.3f}")
-print(f"Probability above $10,000: {prob_above_10000:.3f}")
-```
-
-:::
-
-**Analysis of Multiple Simulation Results:**
-
-From the 100 simulations, we can observe several key insights:
-
-1. **Extreme Volatility**: The final balances range from very small amounts to extremely large amounts
-2. **Log-normal Distribution**: The distribution appears to be log-normal, which is typical for multiplicative processes
-3. **Mean vs Median**: The mean is much higher than the median, indicating a few very high outcomes are pulling the average up
-4. **Risk Assessment**: Most outcomes are below the initial investment, despite the positive expected value per flip
-
-::: {.callout-warning}
-## Critical Insight
-Even though each individual flip has a positive expected value, the probability of ending up with less than your initial investment is quite high over 30 years due to the compounding effects of the multiplicative nature of the game.
-:::
-
-## Question 5: Probability Analysis
-
-Based on the 100 simulations above, let's calculate the probability that your account balance will be greater than $1,000 at age 55.
-
-### Probability Calculation
-
-From our simulation results, we can calculate this probability directly:
-
-**Probability that final balance > $1,000 = Number of simulations with final balance > $1,000 / Total number of simulations**
+**Modified Game Rules:**
+- You bet exactly 50% of your current balance on each flip
+- Heads: You gain 25% of your current balance (1.25x multiplier)
+- Tails: You lose 20% of your current balance (0.80x multiplier)
 
 ```{r}
-#| label: prob-analysis
-#| fig-cap: Probability analysis of achieving balance above $1,000
+#| label: modified-game-comparison
+#| fig-cap: Comparison of original vs modified game strategies
 #| echo: true
 
-# Calculate probability from our simulation results
-prob_above_1000 <- mean(final_balances > initial_balance)
-
-# Calculate additional probability thresholds
-prob_above_500 <- mean(final_balances > 500)
-prob_above_5000 <- mean(final_balances > 5000)
-prob_above_10000 <- mean(final_balances > 10000)
-
-# Create summary table
-prob_summary <- data.frame(
-  Threshold = c("$500", "$1,000 (Initial)", "$5,000", "$10,000"),
-  Probability = c(prob_above_500, prob_above_1000, prob_above_5000, prob_above_10000),
-  Percentage = c(prob_above_500 * 100, prob_above_1000 * 100, prob_above_5000 * 100, prob_above_10000 * 100)
-)
-
-print("Probability Analysis:")
-print(prob_summary)
-
-# Create a visualization of probability thresholds
-library(ggplot2)
-
-# Create a bar plot of probabilities
-ggplot(prob_summary, aes(x = reorder(Threshold, Probability), y = Percentage)) +
-  geom_bar(stat = "identity", fill = "coral", alpha = 0.8) +
-  geom_text(aes(label = paste0(round(Percentage, 1), "%")), 
-            hjust = -0.1, size = 4) +
-  coord_flip() +
-  labs(
-    title = "Probability of Exceeding Different Balance Thresholds",
-    subtitle = "Based on 100 Simulations of Original Investment Game",
-    x = "Balance Threshold",
-    y = "Probability (%)",
-    caption = "Age 25 to 55 (30 years of coin flips)"
-  ) +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(size = 14, face = "bold"),
-    plot.subtitle = element_text(size = 12, color = "gray50")
-  )
-```
-
-### Key Findings
-
-::: {.callout-note}
-## Probability Results
-Based on our 100 simulations of the original investment game:
-
-- **Probability of ending up with more than $1,000:** Approximately **[TO BE FILLED BY SIMULATION]%**
-- **Probability of ending up with more than $5,000:** Approximately **[TO BE FILLED BY SIMULATION]%**  
-- **Probability of ending up with more than $10,000:** Approximately **[TO BE FILLED BY SIMULATION]%**
-:::
-
-**Analysis:**
-This probability analysis reveals the counterintuitive nature of the investment game. Despite having a positive expected value for each individual flip, the long-term probability of maintaining or growing your initial investment is surprisingly low due to the multiplicative nature of the game and the asymmetry between gains and losses.
-
-## Question 6: Strategy Comparison - Modified Game
-
-Now let's implement the modified game strategy and compare it with the original game. The modified strategy has a key difference: you must bet exactly 50% of your current account balance on each flip, and this 50% is locked in for each round.
-
-### Modified Game Rules
-
-**Modified Game Strategy:**
-- You bet exactly 50% of your current account balance on each flip
-- Heads (50% chance): Your bet increases by 50% → You win 50% × 50% = 25% of your current balance
-- Tails (50% chance): Your bet decreases by 40% → You lose 50% × 40% = 20% of your current balance
-- New balance = Current balance + Bet outcome
-
-**Mathematical Formula:**
-- If heads: New balance = Current balance + 0.25 × Current balance = 1.25 × Current balance
-- If tails: New balance = Current balance - 0.20 × Current balance = 0.80 × Current balance
-
-### Modified Game Simulation
-
-::: {.panel-tabset}
-
-### R Implementation
-
-```{r}
-#| label: modified-game-simulation
-#| fig-cap: Modified game strategy simulation and comparison
-#| echo: true
-
-suppressPackageStartupMessages(library(tidyverse))
-suppressPackageStartupMessages(library(ggplot2))
-
-# Set seed for reproducibility
 set.seed(456)
-
-# Parameters
 initial_balance <- 1000
-n_years <- 30  # From age 25 to 55
+n_years <- 30
 n_sims <- 100
 
-# Function to simulate modified game
+# Function for modified game
 simulate_modified_game <- function(initial, years) {
   balance <- initial
   
@@ -1175,11 +834,9 @@ simulate_modified_game <- function(initial, years) {
     coin_flip <- rbinom(1, 1, 0.5)  # 1 = heads, 0 = tails
     
     if (coin_flip == 1) {
-      # Heads: bet increases by 50%, so we gain 25% of current balance
-      balance <- balance + 0.25 * balance  # = 1.25 * balance
+      balance <- balance * 1.25  # +25%
     } else {
-      # Tails: bet decreases by 40%, so we lose 20% of current balance
-      balance <- balance - 0.20 * balance  # = 0.80 * balance
+      balance <- balance * 0.80  # -20%
     }
   }
   
@@ -1189,218 +846,49 @@ simulate_modified_game <- function(initial, years) {
 # Run 100 simulations for modified game
 modified_final_balances <- replicate(n_sims, simulate_modified_game(initial_balance, n_years))
 
-# Create comparison data frame
-comparison_data <- data.frame(
-  Game_Type = c(rep("Original Game", n_sims), rep("Modified Game", n_sims)),
-  Final_Balance = c(final_balances, modified_final_balances)
-)
-
-# Create comparison histogram
-ggplot(comparison_data, aes(x = Final_Balance, fill = Game_Type)) +
-  geom_histogram(alpha = 0.7, bins = 30, position = "identity") +
-  geom_vline(xintercept = 10000, color = "red", linetype = "dashed", linewidth = 1.5) +
-  scale_x_continuous(
-    labels = scales::dollar_format(),
-    trans = "log10",
-    breaks = c(1, 10, 100, 1000, 10000, 100000)
-  ) +
-  labs(
-    title = "Comparison of Final Balances: Original vs Modified Game",
-    subtitle = "100 Simulations Each (Age 25 to 55)",
-    x = "Final Balance at Age 55 ($)",
-    y = "Frequency",
-    caption = "Red line: $10,000 threshold"
-  ) +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(size = 14, face = "bold"),
-    plot.subtitle = element_text(size = 12, color = "gray50"),
-    legend.position = "bottom"
-  ) +
-  guides(fill = guide_legend(title = "Game Strategy"))
-
-# Calculate probabilities for comparison
+# Calculate probabilities
 prob_original_above_10000 <- mean(final_balances > 10000)
 prob_modified_above_10000 <- mean(modified_final_balances > 10000)
 
-# Summary statistics
-comparison_summary <- data.frame(
-  Game_Type = c("Original Game", "Modified Game"),
-  Mean_Balance = c(mean(final_balances), mean(modified_final_balances)),
-  Median_Balance = c(median(final_balances), median(modified_final_balances)),
-  Prob_Above_10000 = c(prob_original_above_10000, prob_modified_above_10000),
-  Prob_Above_1000 = c(mean(final_balances > 1000), mean(modified_final_balances > 1000))
-)
-
-print("Strategy Comparison Results:")
-print(comparison_summary)
+# Show comparison
+cat("Strategy Comparison Results:\n")
+cat("Original Game - Probability above $10,000: ", round(prob_original_above_10000 * 100, 1), "%\n")
+cat("Modified Game - Probability above $10,000: ", round(prob_modified_above_10000 * 100, 1), "%\n")
+cat("Original Game - Mean final balance: $", round(mean(final_balances), 2), "\n")
+cat("Modified Game - Mean final balance: $", round(mean(modified_final_balances), 2), "\n")
 ```
 
-### Python Implementation
-
-```{python}
-#| label: modified-game-simulation-python
-#| fig-cap: Modified game strategy simulation and comparison (Python)
-#| echo: true
-#| eval: false
-
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-
-# Set seed for reproducibility
-np.random.seed(456)
-
-# Parameters
-initial_balance = 1000
-n_years = 30  # From age 25 to 55
-n_sims = 100
-
-# Function to simulate modified game
-def simulate_modified_game(initial, years):
-    balance = initial
-    
-    for i in range(years):
-        coin_flip = np.random.binomial(1, 0.5)  # 1 = heads, 0 = tails
-        
-        if coin_flip == 1:
-            # Heads: bet increases by 50%, so we gain 25% of current balance
-            balance = balance + 0.25 * balance  # = 1.25 * balance
-        else:
-            # Tails: bet decreases by 40%, so we lose 20% of current balance
-            balance = balance - 0.20 * balance  # = 0.80 * balance
-    
-    return balance
-
-# Run 100 simulations for modified game
-modified_final_balances = [simulate_modified_game(initial_balance, n_years) for _ in range(n_sims)]
-
-# Create comparison data
-comparison_data = pd.DataFrame({
-    'Game_Type': ['Original Game'] * n_sims + ['Modified Game'] * n_sims,
-    'Final_Balance': list(final_balances) + list(modified_final_balances)
-})
-
-# Create comparison histogram
-fig, ax = plt.subplots(figsize=(12, 8))
-for game_type in ['Original Game', 'Modified Game']:
-    data = comparison_data[comparison_data['Game_Type'] == game_type]['Final_Balance']
-    ax.hist(data, bins=30, alpha=0.7, label=game_type, density=True)
-
-ax.axvline(10000, color='red', linestyle='--', linewidth=2, label='$10,000 Threshold')
-ax.set_xscale('log')
-ax.set_title('Comparison of Final Balances: Original vs Modified Game\n100 Simulations Each (Age 25 to 55)', 
-             fontsize=14, fontweight='bold')
-ax.set_xlabel('Final Balance at Age 55 ($)', fontsize=12)
-ax.set_ylabel('Density', fontsize=12)
-ax.legend()
-ax.grid(True, alpha=0.3)
-ax.xaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'${x:,.0f}'))
-
-plt.tight_layout()
-plt.show()
-
-# Calculate probabilities for comparison
-prob_original_above_10000 = np.mean(np.array(final_balances) > 10000)
-prob_modified_above_10000 = np.mean(np.array(modified_final_balances) > 10000)
-
-# Summary statistics
-comparison_summary = pd.DataFrame({
-    'Game_Type': ['Original Game', 'Modified Game'],
-    'Mean_Balance': [np.mean(final_balances), np.mean(modified_final_balances)],
-    'Median_Balance': [np.median(final_balances), np.median(modified_final_balances)],
-    'Prob_Above_10000': [prob_original_above_10000, prob_modified_above_10000],
-    'Prob_Above_1000': [np.mean(np.array(final_balances) > 1000), np.mean(np.array(modified_final_balances) > 1000)]
-})
-
-print("Strategy Comparison Results:")
-print(comparison_summary)
-```
-
-:::
-
-### Strategy Comparison Results
-
-::: {.callout-note}
-## Key Findings
-
-**Probability of achieving balance > $10,000 at age 55:**
-
-- **Original Game:** **[TO BE FILLED BY SIMULATION]%**
-- **Modified Game:** **[TO BE FILLED BY SIMULATION]%**
+**Answer:** 
+- **Original Game:** Probability above $10,000 = **[WILL SHOW IN OUTPUT]**%
+- **Modified Game:** Probability above $10,000 = **[WILL SHOW IN OUTPUT]**%
 
 **Comparison:** The probability in the modified game is **[HIGHER/LOWER]** than the original game.
-:::
 
-### Analysis of Modified Strategy
+**Why?** The modified game is more conservative - smaller gains (+25% vs +50%) but also smaller losses (-20% vs -40%), which changes the risk profile.
 
-**Why the Modified Strategy Differs:**
+# Conclusion: Key Insights 🎯
 
-1. **Reduced Volatility**: The modified strategy has smaller percentage changes per flip (25% gain vs 50% gain, 20% loss vs 40% loss)
-2. **More Conservative Approach**: By betting only 50% of the balance, you're not risking your entire account on each flip
-3. **Different Risk-Reward Profile**: The modified strategy trades some upside potential for reduced downside risk
+## What We Learned
 
-**Expected Value Comparison:**
-- **Original Game:** E[Balance] = 1.05 × Current Balance (per flip)
-- **Modified Game:** E[Balance] = 1.025 × Current Balance (per flip)
+**The Counterintuitive Truth:** Even though each coin flip has a positive expected value, most people actually lose money over 30 years!
 
-::: {.callout-warning}
-## Strategic Insight
-The modified strategy demonstrates how risk management can affect long-term outcomes. While the expected value per flip is lower in the modified game, the reduced volatility may lead to different probability distributions of final outcomes.
-:::
+### Key Insights:
 
-# Conclusion: Key Insights from the Investment Game 🎯
+1. **Expected Value ≠ Reality**: Just because the math says you should make money doesn't mean you will
+2. **Volatility Kills Returns**: High volatility (big swings) reduces your chances of success over time
+3. **Simulation Reveals Truth**: Running 100 simulations showed us what intuition couldn't predict
 
-## Summary of Findings
+### Why This Happens:
+- **Multiplicative Process**: Each loss compounds, making it harder to recover
+- **Asymmetric Risk**: A 40% loss requires a 67% gain just to break even
+- **Time Amplifies Problems**: Over 30 years, bad luck compounds dramatically
 
-This simulation challenge has revealed several counterintuitive insights about investment strategies and probability:
+## The Big Picture
 
-### 1. The Paradox of Positive Expected Value
-- **Individual Flips**: Each coin flip has a positive expected value (+5% for original game, +2.5% for modified game)
-- **Long-term Reality**: Despite positive expected values, most simulation paths result in losses
-- **Key Insight**: Positive expected value doesn't guarantee positive outcomes in multiplicative processes
+This challenge demonstrates why **simulation is so powerful** - it reveals insights that pure mathematics and intuition miss. The expected value said "you should make money," but the simulation said "most people lose money."
 
-### 2. The Power of Compounding and Volatility
-- **Multiplicative Nature**: The game's multiplicative structure amplifies both gains and losses over time
-- **Volatility Drag**: High volatility reduces the geometric mean return, even when the arithmetic mean is positive
-- **Risk Assessment**: The probability of maintaining your initial investment decreases significantly over time
-
-### 3. Strategy Comparison Insights
-- **Original Game**: Higher upside potential but also higher downside risk
-- **Modified Game**: More conservative approach with reduced volatility
-- **Risk Management**: Different risk profiles can lead to dramatically different probability distributions
-
-## Theoretical Background: Ergodicity Economics
-
-This challenge demonstrates concepts from **Ergodicity Economics**, which studies the difference between:
-- **Ensemble averages** (expected values across many independent trials)
-- **Time averages** (what happens to one individual over time)
-
-In non-ergodic systems like this investment game, these averages can differ significantly.
-
-## Practical Applications
-
-### For Investors
-1. **Risk Assessment**: Consider not just expected returns but also the distribution of possible outcomes
-2. **Volatility Matters**: High volatility can be detrimental even with positive expected returns
-3. **Time Horizon**: Longer time horizons can amplify the effects of volatility
-
-### For Decision Making
-1. **Look Beyond Averages**: The mean outcome may not be representative of typical outcomes
-2. **Consider Worst-Case Scenarios**: Understanding tail risks is crucial for decision making
-3. **Simulation is Powerful**: Running simulations can reveal insights that intuition might miss
-
-## Final Thoughts
-
-This simulation challenge beautifully illustrates why simulation and empirical analysis are so valuable in understanding complex systems. The mathematical expected value suggested we should be optimistic, but the simulation revealed the harsh reality of multiplicative processes with high volatility.
-
-::: {.callout-tip}
-## The Simulation Advantage
-**"Simulation will steer you right even when intuition will steer you wrong!"** 
-
-This challenge proves that Monte Carlo simulation is an invaluable tool for understanding systems where mathematical intuition alone may lead us astray.
-:::
+**Lesson:** When making important decisions, especially about money, don't just look at averages - understand the full range of possible outcomes through simulation.
 
 ---
 
-*This analysis demonstrates the power of computational methods in revealing counterintuitive insights about probability, risk, and decision-making. The complete code and visualizations provide a comprehensive understanding of how different investment strategies perform under uncertainty.*
+*This analysis shows the power of computational methods in understanding complex systems where intuition alone can be misleading.*
