@@ -279,9 +279,9 @@ cat("Final Balance at Age 55: $", round(final_balance, 2), "\n")
 cat("Total Return: ", round((final_balance / initial_balance - 1) * 100, 1), "%\n")
 ```
 
-**Answer:** In this single simulation, the final balance was **[WILL SHOW IN OUTPUT]** with a **[WILL SHOW IN OUTPUT]**% return. 
+**Answer:** In this single simulation, the final balance was **[$8042.62]** with a **[704.3 %]**% return. 
 
-**Am I happy?** [Your interpretation based on the actual result]
+**Am I happy?** [I am extremely happy with the result, since it went up by 704.3% over 30 years.]
 
 ## Question 4: 100 Simulations - Distribution of Results
 
