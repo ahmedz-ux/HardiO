@@ -93,7 +93,6 @@ total_return <- round((final_balance / initial_balance - 1) * 100, 1)
 
 cat("Final Balance at Age 55: $", round(final_balance, 2), "\n")
 cat("Total Return: ", total_return, "%\n")
-cat("Am I happy? Based on this result, I am **Happy** because the simulation shows **a significant gain** over 30 years.\n")
 ```
 
 
